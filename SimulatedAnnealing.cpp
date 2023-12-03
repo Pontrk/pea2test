@@ -3,7 +3,9 @@
 #include <ctime>
 #include <iostream>
 #include <cmath>
+#include <random>
 #include <climits>
+#include <chrono>
 
 SimulatedAnnealing::SimulatedAnnealing(Adjacency_Matrix& graph, int time, double rate) {
     matrix = graph.getMatrix();
@@ -12,6 +14,7 @@ SimulatedAnnealing::SimulatedAnnealing(Adjacency_Matrix& graph, int time, double
     coolingRate = rate;
     temperatureBuffer = calculateTemperature();
     std::vector<int> initialPath = greedyPath();
+
 }
 
 void SimulatedAnnealing::apply()
@@ -27,7 +30,6 @@ void SimulatedAnnealing::apply()
     double time = 0;
     double foundTime = 0;
     start = std::clock();
-
     while(true)
     {
         while (temperature >= 0.1)
@@ -79,7 +81,6 @@ void SimulatedAnnealing::apply()
         }
         temperature = temperatureBuffer;
         permutation = random_permutation(size);
-
     }
 }
 
@@ -87,28 +88,23 @@ vector<int> SimulatedAnnealing::random_permutation(int _size)
 {
     std::vector<int> temp;
     temp.reserve(_size);
-
     for (int i = 0; i < _size; i++)
     {
         temp.push_back(i);
     }
-
-    random_shuffle(temp.begin(), temp.end());
-
+    std::random_device rd;
+    std::mt19937 g(rd());
+    std::shuffle(temp.begin(), temp.end(), g);
     return temp;
 }
 
 double SimulatedAnnealing::calculateTemperature()
 {
     vector<int> origin;
-
     int firstToSwap;
     int secondToSwap;
-    int originCost = 0;
-    int neighbourCost = 0;
     int delta = 0;
     int buffer = 0;
-
     for (int i = 0; i < 10000; i++)
     {
         do
@@ -116,49 +112,40 @@ double SimulatedAnnealing::calculateTemperature()
             firstToSwap = rand() % size;
             secondToSwap = rand() % size;
         } while (firstToSwap == secondToSwap);
-
         origin = random_permutation(size);
         vector<int> neighbour(origin);
-
         std::swap(neighbour[firstToSwap], neighbour[secondToSwap]);
-
         delta = fabs(calculatePath(origin) - calculatePath(neighbour));
         buffer += delta;
-
     }
-
     buffer /= 10000;
-
     return (-1*buffer)/log(0.99);
 }
 
 int SimulatedAnnealing::calculatePath(vector<int> path)
 {
     int cost = 0;
-
     for (int i = 0; i < path.size() - 1; ++i)
     {
         cost += matrix[path[i]][path[i + 1]];
     }
     cost += matrix[path[size - 1]][path[0]];
-
     return cost;
 }
 
 double SimulatedAnnealing::getProbability(int diff, double temperature)
 {
-
     return exp(diff / temperature);
 }
+
 std::vector<int> SimulatedAnnealing::greedyPath() {
     std::vector<int> path;
     std::vector<bool> visited(size, false);
-    int current = 0;
-
+    // Start from a random vertex
+    int current = rand() % size;
     path.push_back(current);
     visited[current] = true;
     int totalCost = 0;
-
     for (int i = 1; i < size; ++i) {
         int nearest = -1;
         int minDistance = INT_MAX;
