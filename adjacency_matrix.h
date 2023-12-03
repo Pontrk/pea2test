@@ -18,8 +18,10 @@ public:
     void loadFromFile(const string& filename);
     vector<vector<int>> getMatrix();
     void generate(int numberOfNodes);
+    int getCount();
 private:
     vector<vector<int>> matrix;
+    int liczbaWierzcholkow;
 };
 
 

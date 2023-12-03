@@ -19,7 +19,7 @@ void Adjacency_Matrix::loadFromFile(const string& filename){
     matrix.clear();
     string dump,opis="";
     ifstream plik(filename);
-    int wagi, liczbaWierzcholkow;
+    int wagi;
     if (plik.is_open()) {
         getline(plik,dump);
         opis.append(dump+"\n");
@@ -71,4 +71,7 @@ void Adjacency_Matrix::generate(int numberOfNodes){
 }
 vector<vector<int>> Adjacency_Matrix::getMatrix() {
     return matrix;
+}
+int Adjacency_Matrix::getCount() {
+    return liczbaWierzcholkow;
 }

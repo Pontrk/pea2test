@@ -6,4 +6,6 @@ set(CMAKE_CXX_STANDARD 17)
 add_executable(Pea2Projekt main.cpp
         adjacency_matrix.cpp
         adjacency_matrix.h
+        SimulatedAnnealing.cpp
+        SimulatedAnnealing.h
 )
